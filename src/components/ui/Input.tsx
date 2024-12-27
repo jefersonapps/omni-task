@@ -6,7 +6,7 @@ function Input({ children, ...rest }: TextInputProps) {
   return (
     <View
       className={clsx(
-        "flex-1 flex-row bg-transparent rounded-lg border border-zinc-300 px-3 w-full",
+        "flex-1 flex-row bg-transparent rounded-lg border border-zinc-300 px-3 w-full min-h-14",
         "dark:border-zinc-700"
       )}
     >
@@ -15,7 +15,8 @@ function Input({ children, ...rest }: TextInputProps) {
         className={clsx(
           "flex-1 text-zinc-900",
           "dark:text-white",
-          "placeholder:text-zinc-500 dark:placeholder:text-zinc-400"
+          "placeholder:text-zinc-500 dark:placeholder:text-zinc-400",
+          rest.className
         )}
       />
       <View className="ml-2 flex-row items-center">{children}</View>
