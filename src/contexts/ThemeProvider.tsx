@@ -28,7 +28,7 @@ export const ThemeContext = createContext<ThemeContextProps>({
   theme: "light",
   colors: {
     light: {
-      text: "#11181C",
+      text: "#1f2937",
       background: "#fff",
       intense_background: "#f4f4f5",
       tint: defaultTintColor,
@@ -37,9 +37,9 @@ export const ThemeContext = createContext<ThemeContextProps>({
       tabIconSelected: defaultTintColor,
     },
     dark: {
-      text: "#ECEDEE",
+      text: "#f4f4f5",
       background: "#171719",
-      intense_background: "#00000",
+      intense_background: "#fffff",
       tint: defaultTintColor,
       icon: "#9BA1A6",
       tabIconDefault: "#9BA1A6",

@@ -48,14 +48,15 @@ export function ThemedText({
         },
         className
       )}
-      style={
+      style={[
         !className?.includes("text") && {
           color:
-            type === "primary" || type === "primarySemiBold" || type === "link"
+            type === "primary" || type === "primarySemiBold"
               ? currentTintColor
               : color,
-        }
-      }
+        },
+        type === "link" && { color: currentTintColor },
+      ]}
       {...rest}
     />
   );

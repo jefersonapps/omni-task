@@ -6,7 +6,7 @@ export function Header({ title }: { title: string }) {
     <View className="flex-row items-center">
       <Menu />
       <View className="flex-1 justify-center">
-        <Text className="text-2xl mr-[30px] font-semibold my-3 text-center text-gray-800 dark:text-white">
+        <Text className="text-2xl mr-[30px] font-semibold my-3 text-center text-gray-800 dark:text-zinc-100">
           {title}
         </Text>
       </View>

@@ -2,9 +2,9 @@ import { useTheme } from "@/contexts/ThemeProvider";
 import { Entypo } from "@expo/vector-icons";
 import clsx from "clsx";
 import { cloneElement, isValidElement } from "react";
-import { Pressable, PressableProps } from "react-native";
+import { View, ViewProps } from "react-native";
 
-interface IconProps extends PressableProps {
+interface IconProps extends ViewProps {
   customIcon?: React.ReactNode;
   name?: keyof typeof Entypo.glyphMap;
   size?: number;
@@ -20,7 +20,7 @@ export function Icon({
 }: IconProps) {
   const { currentTintColor } = useTheme();
   return (
-    <Pressable
+    <View
       {...rest}
       className={clsx("flex-row items-center justify-center", rest.className)}
     >
@@ -29,6 +29,6 @@ export function Icon({
       ) : (
         <Entypo name={name} size={size} color={color ?? currentTintColor} />
       )}
-    </Pressable>
+    </View>
   );
 }
