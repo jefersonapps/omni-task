@@ -1,6 +1,6 @@
 # OmniTask
 
-Este aplicativo oferece uma maneira conveniente de gerenciar suas tarefas, código LaTeX e senhas, tudo em um só lugar.
+Este aplicativo oferece uma maneira conveniente de gerenciar suas tarefas, código LaTeX, senhas e muito mais!
 
 ## Recursos
 
