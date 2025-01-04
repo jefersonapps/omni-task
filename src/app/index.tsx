@@ -1,5 +1,5 @@
 import { Redirect } from "expo-router";
 
-export default function StartPage() {
+export default function Index() {
   return <Redirect href="/(stack)/(tabs)" />;
 }

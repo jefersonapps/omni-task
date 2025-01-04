@@ -2,6 +2,7 @@ import React, { forwardRef } from "react";
 import clsx from "clsx";
 import { TextInput, TextInputProps, View } from "react-native";
 import { Icon } from "./Icon";
+import { useTheme } from "@/contexts/ThemeProvider";
 
 interface InputComponent
   extends React.ForwardRefExoticComponent<
@@ -12,6 +13,7 @@ interface InputComponent
 
 const Input = forwardRef<TextInput, TextInputProps>(
   ({ children, ...rest }, ref) => {
+    const { currentTintColor } = useTheme();
     return (
       <View
         className={clsx(
@@ -22,6 +24,8 @@ const Input = forwardRef<TextInput, TextInputProps>(
         <TextInput
           ref={ref}
           {...rest}
+          cursorColor={currentTintColor}
+          selectionHandleColor={currentTintColor}
           className={clsx(
             "flex-1 text-zinc-900",
             "dark:text-white",

@@ -7,23 +7,36 @@ import { UserProvider } from "@/contexts/UserProvider";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { ShareIntentProvider } from "expo-share-intent";
 
 export default function Layout() {
   const { colorScheme } = useColorScheme();
   const { colors } = useTheme();
+
   return (
-    <GestureHandlerRootView
-      style={{
-        flex: 1,
-        backgroundColor: colors[colorScheme || "light"].background,
+    <ShareIntentProvider
+      options={{
+        debug: true,
+        resetOnBackground: true,
       }}
     >
-      <ThemeProvider>
-        <UserProvider>
-          <Slot />
-        </UserProvider>
-        <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-      </ThemeProvider>
-    </GestureHandlerRootView>
+      <GestureHandlerRootView
+        style={{
+          flex: 1,
+          backgroundColor: colors[colorScheme || "light"].background,
+        }}
+      >
+        <ThemeProvider>
+          <UserProvider>
+            <Slot />
+          </UserProvider>
+          <StatusBar
+            style={colorScheme === "dark" ? "light" : "dark"}
+            translucent
+            backgroundColor={colors[colorScheme || "light"].background + 95}
+          />
+        </ThemeProvider>
+      </GestureHandlerRootView>
+    </ShareIntentProvider>
   );
 }

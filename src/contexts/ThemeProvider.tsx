@@ -29,7 +29,7 @@ export const ThemeContext = createContext<ThemeContextProps>({
   colors: {
     light: {
       text: "#1f2937",
-      background: "#fff",
+      background: "#ffffff",
       intense_background: "#f4f4f5",
       tint: defaultTintColor,
       icon: "#687076",

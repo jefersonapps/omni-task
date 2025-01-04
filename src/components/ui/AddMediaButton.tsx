@@ -23,7 +23,7 @@ export function AddMediaButton({
     <TouchableOpacity
       {...rest}
       className={clsx(
-        "rounded-lg border-2 border-zinc-200 dark:border-zinc-500 w-full aspect-square flex items-center justify-center",
+        "rounded-lg border-2 border-zinc-200 dark:border-zinc-500 aspect-square flex items-center justify-center",
         className
       )}
     >
