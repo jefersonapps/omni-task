@@ -1,0 +1,29 @@
+import { Media } from "@/contexts/MediaContext";
+import { useMediaManager } from "@/hooks/editor/useMediaManager";
+import { useColorScheme } from "nativewind";
+import { memo } from "react";
+import { MediaItem } from "./MediaItem";
+import { Image } from "react-native";
+
+export const ImageItem = memo(({ image }: { image: Media }) => {
+  const { colorScheme } = useColorScheme();
+  const { deleteMedia } = useMediaManager();
+
+  const handleDelete = async () => {
+    await deleteMedia(image.id);
+  };
+
+  return (
+    <MediaItem
+      onPress={() => console.log(`Imagem: ${image.uri}`)}
+      onDelete={handleDelete}
+      colorScheme={colorScheme}
+      renderContent={() => (
+        <Image
+          source={{ uri: image.uri }}
+          className="rounded-lg w-[100px] aspect-square border border-zinc-300 dark:border-zinc-700"
+        />
+      )}
+    />
+  );
+});

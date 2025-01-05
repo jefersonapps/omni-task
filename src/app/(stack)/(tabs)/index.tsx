@@ -5,15 +5,16 @@ import { Input } from "@/components/ui/Input";
 import { ThemedView } from "@/components/ui/ThemedView";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { Octicons } from "@expo/vector-icons";
-import { Link, router } from "expo-router";
+import { Link, router, useFocusEffect } from "expo-router";
 import { useShareIntent } from "expo-share-intent";
 import Animated from "react-native-reanimated";
 import { useColorScheme } from "nativewind";
 import { useAnimatedHeader } from "@/components/ui/header/hooks/useAnimatedHeader";
 import { AnimatedHeaderWrapper } from "@/components/ui/header/AnimatedHeaderWrapper";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useSearchItems } from "@/hooks/useSeachItems";
 import { ListItem } from "@/components/home/ListItem";
+import { useMediaManager } from "@/hooks/editor/useMediaManager";
 
 const data = Array.from({ length: 500 }, (_, i) => ({
   id: String(i),
@@ -24,6 +25,7 @@ export default function Home() {
   const { currentTintColor, colors } = useTheme();
   const { colorScheme } = useColorScheme();
   const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent();
+  const { deleteAllMedia } = useMediaManager();
 
   useEffect(() => {
     if (hasShareIntent && (shareIntent.files || shareIntent.webUrl)) {
@@ -31,6 +33,12 @@ export default function Home() {
       resetShareIntent();
     }
   }, [hasShareIntent]);
+
+  useFocusEffect(
+    useCallback(() => {
+      deleteAllMedia();
+    }, [])
+  );
 
   const { headerHeight, setHeaderHeight, scrollHandler, animatedStyle } =
     useAnimatedHeader();

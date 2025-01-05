@@ -72,6 +72,14 @@
           "supportsBackgroundPlayback": true,
           "supportsPictureInPicture": true
         }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Permita que o $(PRODUCT_NAME) acesse sua galeria de fotos.",
+          "savePhotosPermission": "Permita que o $(PRODUCT_NAME) salve fotos na sua galeria.",
+          "isAccessMediaLocationEnabled": true
+        }
       ]
     ],
     "experiments": {

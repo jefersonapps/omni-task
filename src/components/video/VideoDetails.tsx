@@ -1,27 +1,75 @@
 import { VideoInfo } from "@/app/(stack)/video/[uri]";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../ui/ThemedText";
-import { formatDuration } from "@/utils/functions";
+import { Input } from "../ui/Input";
+import { useState } from "react";
 
-export function VideoDetails({ videoInfo }: { videoInfo: VideoInfo }) {
+export function VideoDetails({
+  videoInfo,
+  onRename,
+}: {
+  videoInfo: VideoInfo;
+  onRename: (newName: string) => void;
+}) {
+  const [newVideoName, setNewVideoName] = useState(
+    videoInfo?.name.split(".")[0] || ""
+  );
+  const [isChangingVideoName, setIsChangingVideoName] = useState(false);
+
+  const handleRename = () => {
+    onRename(newVideoName);
+
+    setIsChangingVideoName(false);
+  };
+
   return (
-    <View className="space-y-2">
-      <ThemedText type="subtitle">{videoInfo?.name}</ThemedText>
-      <ThemedText type="smallText" className="text-zinc-500 dark:text-zinc-400">
-        Formato: {videoInfo?.type.split("/")[1]}
-      </ThemedText>
-      <ThemedText type="smallText" className="text-zinc-500 dark:text-zinc-400">
-        Tamanho:{" "}
-        {(videoInfo?.size / (1024 * 1024)).toFixed(2).replace(".", ",")} MB
-      </ThemedText>
-      {videoInfo?.duration && (
+    <View className="gap-4">
+      <View className="min-h-10 justify-center">
+        {!isChangingVideoName ? (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setIsChangingVideoName(true)}
+          >
+            <ThemedText type="subtitle" numberOfLines={1}>
+              {videoInfo?.name}
+            </ThemedText>
+          </TouchableOpacity>
+        ) : (
+          <Input
+            value={newVideoName}
+            onChangeText={setNewVideoName}
+            placeholder={"Nome do vídeo..."}
+            autoFocus
+            onSubmitEditing={handleRename}
+            returnKeyType="send"
+          >
+            <TouchableOpacity activeOpacity={0.8} onPress={handleRename}>
+              <Input.Icon name="pencil" />
+            </TouchableOpacity>
+          </Input>
+        )}
+      </View>
+
+      <View className="flex-row items-center justify-between">
         <ThemedText
           type="smallText"
           className="text-zinc-500 dark:text-zinc-400"
+          numberOfLines={1}
         >
-          Duração: {formatDuration(videoInfo.duration / 1000)}
+          Formato:{" "}
+          {videoInfo?.type.includes("/")
+            ? videoInfo?.type.split("/")[1]
+            : videoInfo?.type}
         </ThemedText>
-      )}
+        <ThemedText
+          type="smallText"
+          className="text-zinc-500 dark:text-zinc-400"
+          numberOfLines={1}
+        >
+          Tamanho:{" "}
+          {(videoInfo?.size / (1024 * 1024)).toFixed(2).replace(".", ",")} MB
+        </ThemedText>
+      </View>
     </View>
   );
 }

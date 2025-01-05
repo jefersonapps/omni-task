@@ -91,7 +91,18 @@ export function EditorMediaMenu({ addMedia, pickAudio }: EditorMediaMenuProps) {
 
   return (
     <>
+      <Button type="primary" variant="rounded" filled onPress={toggleMenu}>
+        <Button.Icon
+          customIcon={
+            <Animated.View style={animatedIconStyle}>
+              <Octicons name="plus" size={24} color={currentTintColor} />
+            </Animated.View>
+          }
+        />
+      </Button>
+
       <Animated.View
+        pointerEvents={menuOpen ? "auto" : "none"}
         style={[
           animatedMenuStyle,
           { top: menuTopPosition, transformOrigin: "top right" },
@@ -102,24 +113,16 @@ export function EditorMediaMenu({ addMedia, pickAudio }: EditorMediaMenuProps) {
           iconName="image"
           label="Foto | Vídeo"
           onPressIn={handlePickMedia}
+          disabled={!menuOpen}
         />
 
         <MenuItem
           iconName="musical-notes"
           label="Áudio"
           onPressIn={handlePickAudio}
+          disabled={!menuOpen}
         />
       </Animated.View>
-
-      <Button type="primary" variant="rounded" filled onPress={toggleMenu}>
-        <Button.Icon
-          customIcon={
-            <Animated.View style={animatedIconStyle}>
-              <Octicons name="plus" size={24} color={currentTintColor} />
-            </Animated.View>
-          }
-        />
-      </Button>
     </>
   );
 }

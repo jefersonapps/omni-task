@@ -51,6 +51,8 @@
     <string>Allow $(PRODUCT_NAME) to access your camera</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your microphone</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Permita que o $(PRODUCT_NAME) salve fotos na sua galeria.</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>O app precisa de acesso à sua galeria de fotos para selecionar imagens.</string>
     <key>NSUserActivityTypes</key>

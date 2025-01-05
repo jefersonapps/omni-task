@@ -8,6 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ShareIntentProvider } from "expo-share-intent";
+import { MediaProvider } from "@/contexts/MediaContext";
 
 export default function Layout() {
   const { colorScheme } = useColorScheme();
@@ -16,7 +17,7 @@ export default function Layout() {
   return (
     <ShareIntentProvider
       options={{
-        debug: true,
+        // debug: true,
         resetOnBackground: true,
       }}
     >
@@ -27,9 +28,11 @@ export default function Layout() {
         }}
       >
         <ThemeProvider>
-          <UserProvider>
-            <Slot />
-          </UserProvider>
+          <MediaProvider>
+            <UserProvider>
+              <Slot />
+            </UserProvider>
+          </MediaProvider>
           <StatusBar
             style={colorScheme === "dark" ? "light" : "dark"}
             translucent

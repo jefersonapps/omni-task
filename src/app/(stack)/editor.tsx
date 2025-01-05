@@ -10,7 +10,7 @@ import { Stack } from "expo-router";
 import { useColorScheme } from "nativewind";
 import { ThemedView } from "@/components/ui/ThemedView";
 import { useTheme } from "@/contexts/ThemeProvider";
-import { MediaList } from "@/components/editor/MediaList";
+
 import { useMediaManager } from "@/hooks/editor/useMediaManager";
 import clsx from "clsx";
 import { ThemedText } from "@/components/ui/ThemedText";
@@ -21,6 +21,8 @@ import {
   parseExpensiMark,
 } from "@expensify/react-native-live-markdown";
 import { useShareIntentContext } from "expo-share-intent";
+import { useMediaContext } from "@/contexts/MediaContext";
+import { MediaList } from "@/components/editor/media-list/MediaList";
 
 // const DEFAULT_CONTENT = `#destaque
 
@@ -33,9 +35,13 @@ import { useShareIntentContext } from "expo-share-intent";
 
 const DEFAULT_CONTENT = "";
 
+export type Video = { id: string; uri: string };
+
 export default function EditorScreen() {
   const { shareIntent } = useShareIntentContext();
-  const { media, addMedia, pickAudio } = useMediaManager();
+  const { addMedia, pickAudio } = useMediaManager();
+
+  const { media } = useMediaContext();
 
   const [content, setContent] = useState(DEFAULT_CONTENT);
 
@@ -51,9 +57,7 @@ export default function EditorScreen() {
   const { colorScheme } = useColorScheme();
 
   useEffect(() => {
-    console.log("shareIntent", shareIntent);
     if (shareIntent.webUrl) {
-      console.log("Adicionando link:", shareIntent.webUrl);
       setContent((prev) => prev + "\n" + shareIntent.webUrl);
     }
   }, [shareIntent]);
@@ -70,10 +74,12 @@ export default function EditorScreen() {
         }}
       />
 
-      <View className="flex-1">
-        <View>
-          <MediaList media={media} />
-        </View>
+      <View className="flex-1 mt-4 gap-4">
+        {media.length > 0 && (
+          <View>
+            <MediaList media={media} />
+          </View>
+        )}
 
         <View className="h-14 flex-row items-center gap-4">
           <TextInput

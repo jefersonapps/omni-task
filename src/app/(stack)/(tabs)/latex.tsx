@@ -36,7 +36,7 @@ export default function LatexScreen() {
         className="px-4"
       >
         <View className="py-4 gap-4">
-          <ThemedText type="title" numberOfLines={1} className="my-4">
+          <ThemedText type="title" numberOfLines={1}>
             Equações
           </ThemedText>
           <Input

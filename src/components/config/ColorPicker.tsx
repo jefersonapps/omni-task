@@ -28,8 +28,6 @@ export function ColorPicker({
             key={color.label}
             onPress={() => {
               onSelect(color.hexValue);
-
-              console.log(color.hexValue);
             }}
             className={clsx(
               "h-10 w-10 rounded-full mx-1",
