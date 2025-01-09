@@ -26,13 +26,12 @@ export function useMediaManager() {
           id: newId,
           uri: asset.uri,
           info: {
-            title: asset.fileName || `file.${type}`,
             dimensions: {
               width: asset.width || 0,
               height: asset.height || 0,
             },
             size: asset.fileSize || 0,
-            name: asset.fileName || `file.${type}`,
+            name: asset.fileName?.split(".")[0] || `file-${Date.now()}`,
             type: type || "jpg",
           },
         };
@@ -50,6 +49,8 @@ export function useMediaManager() {
         console.log("Erro", "Nenhum arquivo de mídia disponível para excluir.");
         return;
       }
+
+      console.log("Deleting media:", mediaUri);
 
       const mediaToDelete = await FileSystem.getInfoAsync(mediaUri);
 
@@ -117,9 +118,8 @@ export function useMediaManager() {
           id: newId,
           uri: file.uri,
           info: {
-            title: file.name || `audio.${type}`,
             size: file.size || 0,
-            name: file.name || `audio.${type}`,
+            name: file.name?.split(".")[0] || `audio-${Date.now()}`,
             type: type || "mp3",
           },
         };
@@ -134,7 +134,8 @@ export function useMediaManager() {
 
     await Promise.all(
       files.map(async (file) => {
-        const fileName = file.fileName || `image-${Date.now()}.jpg`;
+        if (file.path.includes("OmniTask")) return;
+        const fileName = file.fileName?.split(".")[0] || `image-${Date.now()}`;
         const fileUri = `${FileSystem.documentDirectory}${fileName}`;
 
         await FileSystem.moveAsync({

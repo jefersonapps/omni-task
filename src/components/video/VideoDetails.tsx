@@ -2,7 +2,7 @@ import { VideoInfo } from "@/app/(stack)/video/[uri]";
 import { TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../ui/ThemedText";
 import { Input } from "../ui/Input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function VideoDetails({
   videoInfo,
@@ -11,16 +11,20 @@ export function VideoDetails({
   videoInfo: VideoInfo;
   onRename: (newName: string) => void;
 }) {
-  const [newVideoName, setNewVideoName] = useState(
-    videoInfo?.name.split(".")[0] || ""
-  );
+  const [newVideoName, setNewVideoName] = useState("");
+
   const [isChangingVideoName, setIsChangingVideoName] = useState(false);
 
   const handleRename = () => {
     onRename(newVideoName);
 
     setIsChangingVideoName(false);
+    setNewVideoName("");
   };
+
+  useEffect(() => {
+    setNewVideoName(videoInfo?.name.split(".")[0] || "");
+  }, [videoInfo]);
 
   return (
     <View className="gap-4">

@@ -1,4 +1,9 @@
-import { router, Stack, useLocalSearchParams } from "expo-router";
+import {
+  router,
+  Stack,
+  useLocalSearchParams,
+  useNavigation,
+} from "expo-router";
 import { useEffect, useState } from "react";
 import {
   View,
@@ -6,7 +11,6 @@ import {
   NativeModules,
   TouchableOpacity,
 } from "react-native";
-import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
 import { listFiles, showEditor } from "react-native-video-trim";
 import { Video, VideoDimensions } from "@/components/ui/Video";
@@ -18,6 +22,9 @@ import { editorConfig } from "@/components/video/utils/editor-config";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { useMediaContext } from "@/contexts/MediaContext";
 import * as MediaLibrary from "expo-media-library";
+import { normalizeVideoUri } from "@/components/video/utils/functions";
+import { ShareOptions } from "react-native-share";
+import Share from "react-native-share";
 
 export interface VideoInfo {
   name: string;
@@ -32,6 +39,7 @@ export default function VideoScreen() {
   const source = uri as string;
   const { currentTintColor } = useTheme();
   const { updateMedia } = useMediaContext();
+  const [isPending, setIsPending] = useState(false);
 
   const [video, setVideo] = useState<{
     id: string;
@@ -43,17 +51,29 @@ export default function VideoScreen() {
     info: videoInfo,
   });
 
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.addListener("beforeRemove", (e) => {
+      e.preventDefault();
+      if (!isPending) {
+        navigation.dispatch(e.data.action);
+      }
+    });
+  }, []);
+
   useEffect(() => {
     const eventEmitter = new NativeEventEmitter(NativeModules.VideoTrim);
     const subscription = eventEmitter.addListener(
       "VideoTrim",
       async (event) => {
         if (event.name === "onFinishTrimming") {
+          setIsPending(true);
           const files = await listFiles();
           if (files.length > 0) {
             const trimmedUri = files[files.length - 1];
             const fileInfo = await FileSystem.getInfoAsync(
-              `file://${trimmedUri}`
+              normalizeVideoUri(trimmedUri)
             );
 
             if (!fileInfo.exists) {
@@ -62,8 +82,13 @@ export default function VideoScreen() {
             }
 
             const asset = await MediaLibrary.createAssetAsync(trimmedUri);
+
+            const newVideoName = video.info?.name
+              ? video.info.name.split(".")[0] + "_cortado"
+              : trimmedUri.split("/").pop()?.split(".")[0] || "video";
+
             const updatedVideoInfo: VideoInfo = {
-              name: trimmedUri.split("/").pop() || "video.mp4",
+              name: newVideoName,
               type: trimmedUri.split(".").pop() || "mp4",
               dimensions: {
                 width: asset.width || 1920,
@@ -74,43 +99,51 @@ export default function VideoScreen() {
 
             setVideo({
               id: id as string,
-              uri: trimmedUri,
+              uri: normalizeVideoUri(trimmedUri),
               info: updatedVideoInfo,
             });
+            setIsPending(false);
           }
         }
       }
     );
     return () => subscription.remove();
-  }, [id]);
+  }, [id, video]);
 
   const handleShare = async () => {
+    const options = {
+      url: video.uri,
+      filename: video.info?.name || "video",
+      type: "video/*",
+      excludedActivityTypes: ["com.jefersonapps.OmniTask"],
+      failOnCancel: false,
+    } as ShareOptions;
     try {
-      await Sharing.shareAsync(video.uri, {
-        mimeType: "video/*",
-      });
+      await Share.open(options);
     } catch (error) {
-      console.log("Erro", "Não foi possível compartilhar o vídeo.");
+      console.error("Error =>", error);
     }
   };
 
   const handleOpenEditor = async () => {
-    showEditor(video.uri, {
-      jumpToPositionOnLoad: 1,
-      ...editorConfig,
-    });
+    if (video && !isPending) {
+      showEditor(video.uri, {
+        jumpToPositionOnLoad: 1,
+        ...editorConfig,
+      });
+    }
   };
 
   const handleUpdateMedia = async () => {
-    if (video) {
+    if (video && !isPending) {
       try {
         updateMedia(video.id, {
-          uri: `file://${video.uri}`,
+          uri: normalizeVideoUri(video.uri),
           info: video.info!,
         });
         router.replace({ pathname: "/editor" });
       } catch (error) {
-        console.log("Erro", "Falha ao atualizar as informações do vídeo.");
+        console.error("Erro", "Falha ao atualizar as informações do vídeo.");
       }
     }
   };
@@ -118,23 +151,27 @@ export default function VideoScreen() {
   const handleRenameVideoFile = async (newName: string) => {
     try {
       if (!video) {
-        console.log("Erro", "Nenhum vídeo disponível para renomear.");
+        console.error("Erro", "Nenhum vídeo disponível para renomear.");
         return;
       }
 
       const directory = video.uri.substring(0, video.uri.lastIndexOf("/"));
       const newUri = `${directory}/${newName}.${video.info?.type || "mp4"}`;
 
+      const originalFileUri = normalizeVideoUri(video.uri);
+      const newFileUri = normalizeVideoUri(newUri);
+
+      setIsPending(true);
       await FileSystem.moveAsync({
-        from: video.uri,
-        to: newUri,
+        from: originalFileUri,
+        to: newFileUri,
       });
 
       if (!video.info) return;
 
       const updatedVideoInfo: VideoInfo = {
         ...video.info,
-        name: `${newName}.${video.info?.type || "mp4"}`,
+        name: newName,
       };
 
       setVideo({
@@ -147,11 +184,9 @@ export default function VideoScreen() {
         uri: newUri,
         info: updatedVideoInfo,
       });
-
-      console.log("Sucesso", "O arquivo foi renomeado com sucesso!");
+      setIsPending(false);
     } catch (error) {
       console.error("Erro ao renomear o arquivo:", error);
-      console.log("Erro", "Falha ao renomear o arquivo de vídeo.");
     }
   };
 
@@ -171,8 +206,10 @@ export default function VideoScreen() {
         <Video
           data={{
             uri: video?.uri,
-            dimensions: video?.info?.dimensions ||
-              videoInfo.dimensions || { width: 1920, height: 1080 },
+            dimensions: video?.info?.dimensions || {
+              width: 1920,
+              height: 1080,
+            },
           }}
           aspectRatio={16 / 9}
           style={{ borderRadius: 8 }}
@@ -182,7 +219,13 @@ export default function VideoScreen() {
 
       <View className="p-4 gap-4">
         <VideoDetails
-          videoInfo={video?.info || videoInfo}
+          videoInfo={
+            video?.info || {
+              name: "",
+              size: 0,
+              type: "",
+            }
+          }
           onRename={handleRenameVideoFile}
         />
         <VideoActions

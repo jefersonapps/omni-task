@@ -29,7 +29,7 @@ export default function Home() {
 
   useEffect(() => {
     if (hasShareIntent && (shareIntent.files || shareIntent.webUrl)) {
-      router.push("/editor");
+      router.replace("/editor");
       resetShareIntent();
     }
   }, [hasShareIntent]);

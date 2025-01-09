@@ -9,6 +9,7 @@ import { VideoInfo } from "@/app/(stack)/video/[uri]";
 import { Image, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Entypo } from "@expo/vector-icons";
+import { normalizeVideoUri } from "@/components/video/utils/functions";
 
 export const VideoItem = memo(({ video }: { video: Media }) => {
   const [thumbUri, setThumbUri] = useState<string>("");
@@ -17,7 +18,9 @@ export const VideoItem = memo(({ video }: { video: Media }) => {
 
   useEffect(() => {
     const fetchThumbnail = async () => {
-      const { thumbUri } = await generateThumbnail(video.uri);
+      const fileUri = normalizeVideoUri(video.uri);
+
+      const { thumbUri } = await generateThumbnail(fileUri);
       setThumbUri(thumbUri);
     };
 
