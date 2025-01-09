@@ -141,7 +141,7 @@ export default function VideoScreen() {
           uri: normalizeVideoUri(video.uri),
           info: video.info!,
         });
-        router.replace({ pathname: "/editor" });
+        router.back();
       } catch (error) {
         console.error("Erro", "Falha ao atualizar as informações do vídeo.");
       }
