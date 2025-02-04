@@ -1,17 +1,16 @@
-// hooks/useShareMedia.ts
 import Share, { ShareOptions } from "react-native-share";
 
 interface MediaShare {
   uri: string;
   info: {
     name: string;
-    type: string;
+    mimeType: string;
   };
 }
 
 export function useShareMedia(media: MediaShare) {
-  const hasAudio = media.info?.type.includes("audio");
-  const hasVideo = media.info?.type.includes("video");
+  const hasAudio = media.info?.mimeType.includes("audio");
+  const hasVideo = media.info?.mimeType.includes("video");
 
   const type = hasAudio ? "audio/*" : hasVideo ? "video/*" : "image/*";
   const handleShare = async () => {

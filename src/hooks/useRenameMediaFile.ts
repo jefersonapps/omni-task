@@ -1,13 +1,6 @@
-import * as FileSystem from "expo-file-system";
-import { normalizeFileUri } from "@/utils/functions";
+import { renameFile } from "@/utils/functions";
 import { Media, MediaInfo } from "@/contexts/MediaContext";
 import { Dispatch, SetStateAction } from "react";
-
-interface MediaData {
-  id: string;
-  uri: string;
-  info?: MediaInfo;
-}
 
 type UpdateMediaFn = (
   id: string,
@@ -15,7 +8,7 @@ type UpdateMediaFn = (
 ) => void;
 
 export function useRenameMediaFile(
-  media: MediaData,
+  media: Media,
   updateMedia: UpdateMediaFn,
   setIsPending: (pending: boolean) => void,
   setMedia: Dispatch<SetStateAction<Media>>
@@ -27,18 +20,8 @@ export function useRenameMediaFile(
         return;
       }
 
-      const newFileName = newName.trim();
-
-      const directory = media.uri.substring(0, media.uri.lastIndexOf("/"));
-      const newUri = `${directory}/${newFileName}.${media.info?.type || "mp4"}`;
-      const originalFileUri = normalizeFileUri(media.uri);
-      const newFileUri = normalizeFileUri(newUri);
-
       setIsPending(true);
-      await FileSystem.moveAsync({
-        from: originalFileUri,
-        to: newFileUri,
-      });
+      const { newFileName, newFileUri } = await renameFile(media, newName);
 
       const prevMediaInfo = media.info || { name: "", type: "", size: 0 };
 
@@ -48,13 +31,13 @@ export function useRenameMediaFile(
       };
 
       updateMedia(media.id, {
-        uri: newUri,
+        uri: newFileUri,
         info: updatedMediaInfo,
       });
 
       setMedia({
         id: media.id,
-        uri: newUri,
+        uri: newFileUri,
         info: updatedMediaInfo,
       });
     } catch (error) {

@@ -8,6 +8,7 @@ export interface MediaDimensions {
 export interface MediaInfo {
   name: string;
   type: string;
+  mimeType: string;
   dimensions?: MediaDimensions;
   size: number;
 }

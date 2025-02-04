@@ -34,6 +34,7 @@ export function useMediaManager() {
               size: asset.fileSize || 0,
               name: asset.fileName?.split(".")[0] || `file-${Date.now()}`,
               type: type || "jpg",
+              mimeType: asset.mimeType || "image/jpeg",
             },
           };
         })
@@ -120,11 +121,11 @@ export function useMediaManager() {
           return {
             id: newId,
             uri: file.uri,
-
             info: {
               size: file.size || 0,
               name: file.name?.split(".")[0] || `audio-${Date.now()}`,
               type: type || "mp3",
+              mimeType: file.mimeType || "audio/mp3",
             },
           };
         })
@@ -134,13 +135,13 @@ export function useMediaManager() {
     }
   };
 
-  async function handleSetImageFromShareIntent(files: ShareIntentFile[]) {
-    const newImages: Media[] = [];
+  async function handleSetFilesFromShareIntent(files: ShareIntentFile[]) {
+    const newFiles: Media[] = [];
 
     await Promise.all(
       files.map(async (file) => {
         if (file.path.includes("OmniTask")) return;
-        const fileName = file.fileName?.split(".")[0] || `image-${Date.now()}`;
+        const fileName = file.fileName?.split(".")[0] || `file-${Date.now()}`;
         const fileUri = `${FileSystem.documentDirectory}${fileName}`;
 
         await FileSystem.moveAsync({
@@ -150,20 +151,21 @@ export function useMediaManager() {
 
         const fileExists = await FileSystem.getInfoAsync(fileUri);
         if (!fileExists.exists) {
-          console.error("Imagem não encontrada no local esperado:", fileUri);
+          console.error("Arquivo não encontrado no local esperado:", fileUri);
           return;
         }
         const newId = Crypto.randomUUID();
 
         const type = file.mimeType.split("/")[1];
 
-        newImages.push({
+        newFiles.push({
           id: newId,
           uri: fileUri,
           info: {
             name: fileName,
             size: fileExists.size,
             type: type || "jpg",
+            mimeType: file.mimeType || "image/jpeg",
             dimensions: {
               width: file.width || 0,
               height: file.height || 0,
@@ -173,20 +175,20 @@ export function useMediaManager() {
       })
     );
 
-    setMedia((prevMedia) => [...prevMedia, ...newImages]);
+    setMedia((prevMedia) => [...prevMedia, ...newFiles]);
   }
 
-  function handleSetIntentImage() {
+  function handleSetIntentFiles() {
     if (!shareIntent.files) return;
 
     if (Array.isArray(shareIntent.files) && shareIntent.files.length > 0) {
-      handleSetImageFromShareIntent(shareIntent.files);
+      handleSetFilesFromShareIntent(shareIntent.files);
     }
   }
 
   useEffect(() => {
     if (shareIntent.files) {
-      handleSetIntentImage();
+      handleSetIntentFiles();
     }
   }, [shareIntent]);
 

@@ -39,6 +39,7 @@ export default function ImageScreen() {
       info: originalMedia?.info || {
         name: "image",
         type: "jpg",
+        mimeType: "image/jpg",
         dimensions: {
           width: 0,
           height: 0,
@@ -56,7 +57,7 @@ export default function ImageScreen() {
     uri: image.uri,
     info: {
       name: image.info?.name || "image",
-      type: image.info?.type || "image/jpg",
+      mimeType: image.info?.mimeType || "image/jpg",
     },
   });
 
@@ -100,7 +101,7 @@ export default function ImageScreen() {
         }}
       />
 
-      <ScrollView contentContainerClassName="flex-1 p-4 gap-4">
+      <ScrollView contentContainerClassName="p-4 gap-4">
         <TouchableOpacity
           onPress={() => setIsImageViewerVisible(true)}
           activeOpacity={0.8}

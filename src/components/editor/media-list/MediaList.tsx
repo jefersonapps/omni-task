@@ -11,19 +11,19 @@ interface MediaListProps {
 }
 
 export const MediaList = memo(({ media }: MediaListProps) => {
-  const isVideo = useCallback((uri: string) => uri.endsWith(".mp4"), []);
+  const isVideo = useCallback(
+    (media: Media) => media.info.mimeType.includes("video"),
+    []
+  );
   const isAudio = useCallback(
-    (uri: string) =>
-      uri.match(
-        /\.(mp3|wav|ogg|aac|flac|m4a|aiff|wma|ape|ac3|alac|mka|opus|m4p|oga|spx|tta)$/
-      ),
+    (item: Media) => item.info.mimeType.includes("audio"),
     []
   );
 
   const renderMediaItem = useCallback(
     ({ item }: { item: Media }) => {
-      if (isVideo(item.uri)) return <VideoItem video={item} />;
-      if (isAudio(item.uri)) return <AudioItem audio={item} />;
+      if (isVideo(item)) return <VideoItem video={item} />;
+      if (isAudio(item)) return <AudioItem audio={item} />;
       return <ImageItem image={item} />;
     },
     [isVideo, isAudio]

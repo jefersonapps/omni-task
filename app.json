@@ -97,6 +97,12 @@
             "com.zhiliaoapp.musically"
           ]
         }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Permita que $(PRODUCT_NAME) acesse seu microfone."
+        }
       ]
     ],
     "experiments": {

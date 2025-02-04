@@ -23,7 +23,7 @@ import { usePreventNavigation } from "@/hooks/usePreventNavigation";
 import { useShareMedia } from "@/hooks/useShareMedia";
 import { useRenameMediaFile } from "@/hooks/useRenameMediaFile";
 
-export default function VideoScreen() {
+export default function AudioScreen() {
   const { id } = useLocalSearchParams();
   const { currentTintColor } = useTheme();
   const { updateMedia } = useMediaContext();
@@ -37,13 +37,13 @@ export default function VideoScreen() {
     return mediaData;
   }, []);
 
-  const [video, setVideo] = useState<Media>({
+  const [audio, setAudio] = useState<Media>({
     id: id as string,
     uri: originalMedia?.uri || "",
     info: originalMedia?.info || {
-      name: "video",
-      type: "mp4",
-      mimeType: "video/mp4",
+      name: "audio",
+      type: "mp3",
+      mimeType: "audio/mp3",
       dimensions: {
         width: 0,
         height: 0,
@@ -53,6 +53,13 @@ export default function VideoScreen() {
   });
 
   usePreventNavigation(isPending);
+
+  const { renameMediaFile } = useRenameMediaFile(
+    audio,
+    updateMedia,
+    setIsPending,
+    setAudio
+  );
 
   useEffect(() => {
     const eventEmitter = new NativeEventEmitter(NativeModules.VideoTrim);
@@ -69,20 +76,20 @@ export default function VideoScreen() {
             );
 
             if (!fileInfo.exists) {
-              console.error("Arquivo de vídeo não encontrado.");
+              console.error("Arquivo de áudio não encontrado.");
               return;
             }
 
             const asset = await MediaLibrary.createAssetAsync(trimmedUri);
 
-            const newVideoName = video.info?.name
-              ? video.info.name.split(".")[0] + "_cortado"
-              : trimmedUri.split("/").pop()?.split(".")[0] || "video";
+            const newAudioName = audio.info?.name
+              ? audio.info.name.split(".")[0] + "_cortado"
+              : trimmedUri.split("/").pop()?.split(".")[0] || "audio";
 
-            const updatedVideoInfo: MediaInfo = {
-              name: newVideoName,
-              type: trimmedUri.split(".").pop() || "mp4",
-              mimeType: `video/${trimmedUri.split(".").pop() || "mp4"}`,
+            const updatedAudioInfo: MediaInfo = {
+              name: newAudioName,
+              type: trimmedUri.split(".").pop() || "mp3",
+              mimeType: `audio/${trimmedUri.split(".").pop() || "mp3"}`,
               dimensions: {
                 width: asset.width || 1920,
                 height: asset.height || 1080,
@@ -90,39 +97,46 @@ export default function VideoScreen() {
               size: fileInfo.size || 0,
             };
 
-            setVideo({
+            setAudio({
               id: id as string,
               uri: normalizeFileUri(trimmedUri),
-              info: updatedVideoInfo,
+              info: updatedAudioInfo,
             });
+
             setIsPending(false);
           }
         }
       }
     );
     return () => subscription.remove();
-  }, [id, video]);
+  }, [id, audio]);
+
+  console.log(audio.uri);
 
   const { handleShare } = useShareMedia({
-    uri: video.uri,
+    uri: audio.uri,
     info: {
-      name: video.info?.name || "video",
-      mimeType: video.info?.mimeType || "video/mp4",
+      name: audio.info?.name || "audio",
+      mimeType: audio.info?.mimeType || "audio/mp3",
     },
   });
 
   const handleOpenEditor = async () => {
-    if (video && !isPending) {
-      showEditor(video.uri, editorConfig);
+    if (audio && !isPending) {
+      showEditor(audio.uri, {
+        ...editorConfig,
+        type: "audio",
+        outputExt: "mp3",
+      });
     }
   };
 
   const handleUpdateMedia = async () => {
-    if (video && !isPending) {
+    if (audio && !isPending) {
       try {
-        updateMedia(video.id, {
-          uri: normalizeFileUri(video.uri),
-          info: video.info!,
+        updateMedia(audio.id, {
+          uri: normalizeFileUri(audio.uri),
+          info: audio.info!,
         });
         router.back();
       } catch (error) {
@@ -131,18 +145,11 @@ export default function VideoScreen() {
     }
   };
 
-  const { renameMediaFile } = useRenameMediaFile(
-    video,
-    updateMedia,
-    setIsPending,
-    setVideo
-  );
-
   return (
     <ThemedView className="flex-1">
       <Stack.Screen
         options={{
-          title: "Detalhes do Vídeo",
+          title: "Detalhes do Áudio",
           headerRight: () => (
             <TouchableOpacity activeOpacity={0.6} onPressIn={handleUpdateMedia}>
               <ThemedText type="link">Salvar</ThemedText>
@@ -155,8 +162,8 @@ export default function VideoScreen() {
         <View className="w-full justify-center items-center">
           <Video
             data={{
-              uri: video?.uri,
-              dimensions: video?.info?.dimensions || {
+              uri: audio?.uri,
+              dimensions: audio?.info?.dimensions || {
                 width: 1920,
                 height: 1080,
               },
@@ -164,6 +171,7 @@ export default function VideoScreen() {
             aspectRatio={16 / 9}
             style={{ borderRadius: 8 }}
             allowsPictureInPicture
+            showWavesOverlay
           />
         </View>
 
@@ -171,7 +179,7 @@ export default function VideoScreen() {
           <MediaDetails
             isRenamePending={isPending}
             mediaInfo={
-              video?.info || {
+              audio?.info || {
                 name: "",
                 size: 0,
                 type: "",

@@ -94,7 +94,7 @@ export default function ConfigScreen() {
           {!isChangingUserName ? (
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => {
+              onPressIn={() => {
                 setIsChangingUserName(true);
               }}
               className="py-[7.4px]"

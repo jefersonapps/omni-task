@@ -57,7 +57,7 @@
     <key>NSCameraUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your camera</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your microphone</string>
+    <string>Permita que $(PRODUCT_NAME) acesse seu microfone.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>Permita que o $(PRODUCT_NAME) salve fotos na sua galeria.</string>
     <key>NSPhotoLibraryUsageDescription</key>
