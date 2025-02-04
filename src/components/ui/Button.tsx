@@ -11,7 +11,14 @@ import { useTheme } from "@/contexts/ThemeProvider";
 import { useColorScheme } from "nativewind";
 
 type ButtonType = "default" | "ghost" | "primary";
-type ButtonVariant = "square" | "rounded" | "pill" | "circle" | "float";
+type ButtonVariant =
+  | "square"
+  | "rounded"
+  | "pill"
+  | "circle"
+  | "tinyCircle"
+  | "mediumCircle"
+  | "float";
 
 export type ButtonProps = TouchableNativeFeedbackProps & {
   type?: ButtonType;
@@ -50,6 +57,8 @@ const Button = forwardRef<TouchableNativeFeedback, ButtonProps>(
       square: "rounded",
       rounded: "rounded-lg",
       circle: "rounded-full",
+      tinyCircle: "rounded-full",
+      mediumCircle: "rounded-full",
       pill: "rounded-2xl",
       float: "rounded-xl",
     };
@@ -84,7 +93,10 @@ const Button = forwardRef<TouchableNativeFeedback, ButtonProps>(
               className={clsx(
                 "flex-row items-center justify-center",
                 variant === "float" && "px-5 py-3.5",
-                variant === "circle" && "h-full aspect-square",
+                variant === "circle" && "h-full aspect-square p-3",
+                variant === "tinyCircle" && "h-full aspect-square p-0.5",
+                variant === "mediumCircle" &&
+                  "h-full aspect-square p-2 bg-transparent",
                 variant === "pill" && "px-4 py-2 gap-2",
                 variant === "square" && "px-4 py-2 gap-2",
                 variant === "rounded" && "px-4 py-2 gap-2",

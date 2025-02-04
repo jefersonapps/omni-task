@@ -1,3 +1,4 @@
+import { MediaDimensions } from "@/contexts/MediaContext";
 import {
   isPictureInPictureSupported,
   useVideoPlayer,
@@ -7,15 +8,10 @@ import {
 
 import { View, useWindowDimensions, ViewStyle } from "react-native";
 
-export interface VideoDimensions {
-  width: number;
-  height: number;
-}
-
 export interface VideoProps extends Omit<VideoViewProps, "player"> {
   data: {
     uri: string;
-    dimensions: VideoDimensions;
+    dimensions: MediaDimensions;
   };
   allowsPictureInPicture?: boolean;
   allowsNativeControls?: boolean;
@@ -53,14 +49,11 @@ export function Video({
   }
 
   return (
-    <View
-      className="items-center justify-center border border-zinc-300 dark:border-zinc-700 bg-zinc-950 rounded-xl"
-      style={{ width }}
-    >
+    <View className="w-full items-center justify-center border border-zinc-300 dark:border-zinc-700 bg-zinc-950 rounded-xl">
       <VideoView
         {...rest}
         style={{
-          width: width - 2,
+          width: width - 28,
           height,
           ...style,
         }}

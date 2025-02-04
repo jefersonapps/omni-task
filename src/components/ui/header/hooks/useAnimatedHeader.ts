@@ -11,21 +11,26 @@ export const useAnimatedHeader = () => {
   const scrollY = useSharedValue(0);
   const lastScrollY = useSharedValue(0);
   const isHeaderVisible = useSharedValue(true);
+  const scrollDelta = useSharedValue(0);
 
   const scrollHandler = useAnimatedScrollHandler(
     (event) => {
       scrollY.value = event.contentOffset.y;
+      const delta = event.contentOffset.y - lastScrollY.value;
 
-      if (scrollY.value <= 0) {
-        if (!isHeaderVisible.value) {
-          isHeaderVisible.value = true;
-        }
-      } else if (scrollY.value >= headerHeight) {
-        const direction = event.contentOffset.y - lastScrollY.value;
-        if (direction > 0 && isHeaderVisible.value) {
-          isHeaderVisible.value = false;
-        } else if (direction < 0 && !isHeaderVisible.value) {
-          isHeaderVisible.value = true;
+      if (scrollY.value <= headerHeight) {
+        isHeaderVisible.value = true;
+        scrollDelta.value = 0;
+      } else {
+        scrollDelta.value += delta;
+
+        if (Math.abs(scrollDelta.value) >= headerHeight) {
+          if (scrollDelta.value > 0 && isHeaderVisible.value) {
+            isHeaderVisible.value = false;
+          } else if (scrollDelta.value < 0 && !isHeaderVisible.value) {
+            isHeaderVisible.value = true;
+          }
+          scrollDelta.value = 0;
         }
       }
 
@@ -51,5 +56,6 @@ export const useAnimatedHeader = () => {
     setHeaderHeight,
     scrollHandler,
     animatedStyle,
+    scrollY,
   };
 };

@@ -18,24 +18,26 @@ export function useMediaManager() {
     });
 
     if (!result.canceled && result.assets.length > 0) {
-      const newMedia = result.assets.map((asset) => {
-        const newId = Crypto.randomUUID();
-        const type = asset.mimeType?.split("/")[1];
+      const newMedia: Media[] = await Promise.all(
+        result.assets.map(async (asset) => {
+          const newId = Crypto.randomUUID();
+          const type = asset.mimeType?.split("/")[1];
 
-        return {
-          id: newId,
-          uri: asset.uri,
-          info: {
-            dimensions: {
-              width: asset.width || 0,
-              height: asset.height || 0,
+          return {
+            id: newId,
+            uri: asset.uri,
+            info: {
+              dimensions: {
+                width: asset.width || 0,
+                height: asset.height || 0,
+              },
+              size: asset.fileSize || 0,
+              name: asset.fileName?.split(".")[0] || `file-${Date.now()}`,
+              type: type || "jpg",
             },
-            size: asset.fileSize || 0,
-            name: asset.fileName?.split(".")[0] || `file-${Date.now()}`,
-            type: type || "jpg",
-          },
-        };
-      });
+          };
+        })
+      );
 
       setMedia((prev) => [...prev, ...newMedia]);
     }
@@ -110,20 +112,23 @@ export function useMediaManager() {
     });
 
     if (!result.canceled && result.assets.length > 0) {
-      const newMedia = result.assets.map((file) => {
-        const newId = Crypto.randomUUID();
-        const type = file.mimeType?.split("/")[1];
+      const newMedia: Media[] = await Promise.all(
+        result.assets.map(async (file) => {
+          const newId = Crypto.randomUUID();
+          const type = file.mimeType?.split("/")[1];
 
-        return {
-          id: newId,
-          uri: file.uri,
-          info: {
-            size: file.size || 0,
-            name: file.name?.split(".")[0] || `audio-${Date.now()}`,
-            type: type || "mp3",
-          },
-        };
-      });
+          return {
+            id: newId,
+            uri: file.uri,
+
+            info: {
+              size: file.size || 0,
+              name: file.name?.split(".")[0] || `audio-${Date.now()}`,
+              type: type || "mp3",
+            },
+          };
+        })
+      );
 
       setMedia((prev) => [...prev, ...newMedia]);
     }

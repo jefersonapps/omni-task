@@ -5,11 +5,11 @@ import { memo, useEffect, useState } from "react";
 import { generateThumbnail } from "../utils/functions";
 import { MediaItem } from "./MediaItem";
 import { router } from "expo-router";
-import { VideoInfo } from "@/app/(stack)/video/[uri]";
+
 import { Image, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Entypo } from "@expo/vector-icons";
-import { normalizeVideoUri } from "@/components/video/utils/functions";
+import { normalizeFileUri } from "@/utils/functions";
 
 export const VideoItem = memo(({ video }: { video: Media }) => {
   const [thumbUri, setThumbUri] = useState<string>("");
@@ -18,7 +18,7 @@ export const VideoItem = memo(({ video }: { video: Media }) => {
 
   useEffect(() => {
     const fetchThumbnail = async () => {
-      const fileUri = normalizeVideoUri(video.uri);
+      const fileUri = normalizeFileUri(video.uri);
 
       const { thumbUri } = await generateThumbnail(fileUri);
       setThumbUri(thumbUri);
@@ -35,11 +35,9 @@ export const VideoItem = memo(({ video }: { video: Media }) => {
     <MediaItem
       onPress={() =>
         router.push({
-          pathname: "/video/[uri]",
+          pathname: "/video/[id]",
           params: {
-            uri: video.uri,
             id: video.id,
-            info: JSON.stringify(video.info as VideoInfo),
           },
         })
       }

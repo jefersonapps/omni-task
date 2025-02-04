@@ -7,7 +7,6 @@ import { useTheme } from "@/contexts/ThemeProvider";
 import { Octicons } from "@expo/vector-icons";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useShareIntent } from "expo-share-intent";
-import Animated from "react-native-reanimated";
 import { useColorScheme } from "nativewind";
 import { useAnimatedHeader } from "@/components/ui/header/hooks/useAnimatedHeader";
 import { AnimatedHeaderWrapper } from "@/components/ui/header/AnimatedHeaderWrapper";
@@ -15,8 +14,9 @@ import { useCallback, useEffect } from "react";
 import { useSearchItems } from "@/hooks/useSeachItems";
 import { ListItem } from "@/components/home/ListItem";
 import { useMediaManager } from "@/hooks/editor/useMediaManager";
+import { AnimatedFlatList } from "@/components/ui/flat-list/AnimatedFlatList";
 
-const data = Array.from({ length: 500 }, (_, i) => ({
+const data = Array.from({ length: 100 }, (_, i) => ({
   id: String(i),
   title: `Item ${i + 1}`,
 }));
@@ -40,8 +40,13 @@ export default function Home() {
     }, [])
   );
 
-  const { headerHeight, setHeaderHeight, scrollHandler, animatedStyle } =
-    useAnimatedHeader();
+  const {
+    headerHeight,
+    scrollY,
+    setHeaderHeight,
+    scrollHandler,
+    animatedStyle,
+  } = useAnimatedHeader();
 
   const { searchTerm, filteredItems, handleSearch, handleSearchSubmit } =
     useSearchItems(data, ["title"]);
@@ -83,18 +88,13 @@ export default function Home() {
         </View>
       </AnimatedHeaderWrapper>
 
-      <Animated.FlatList
+      <AnimatedFlatList
         data={filteredItems}
-        initialNumToRender={100}
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={50}
-        windowSize={50}
+        headerHeight={headerHeight}
         keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
         onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        contentContainerStyle={{ paddingTop: headerHeight }}
         renderItem={({ item }) => <ListItem item={item} />}
+        scrollY={scrollY}
       />
 
       <Link href="/editor" asChild>

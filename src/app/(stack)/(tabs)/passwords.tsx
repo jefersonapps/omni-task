@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/Button";
 import { Octicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useTheme } from "@/contexts/ThemeProvider";
-import Animated from "react-native-reanimated";
 import { useColorScheme } from "nativewind";
 import { useAnimatedHeader } from "@/components/ui/header/hooks/useAnimatedHeader";
 import { AnimatedHeaderWrapper } from "@/components/ui/header/AnimatedHeaderWrapper";
 import { useSearchItems } from "@/hooks/useSeachItems";
 import { PasswordItem } from "@/components/passwords/PasswordItem";
+import { AnimatedFlatList } from "@/components/ui/flat-list/AnimatedFlatList";
 
 interface Password {
   id: string;
@@ -26,8 +26,13 @@ const data: Password[] = Array.from({ length: 50 }, (_, i) => ({
 export default function Passwords() {
   const { currentTintColor, colors } = useTheme();
   const { colorScheme } = useColorScheme();
-  const { headerHeight, setHeaderHeight, scrollHandler, animatedStyle } =
-    useAnimatedHeader();
+  const {
+    headerHeight,
+    scrollY,
+    setHeaderHeight,
+    scrollHandler,
+    animatedStyle,
+  } = useAnimatedHeader();
 
   const { searchTerm, filteredItems, handleSearch, handleSearchSubmit } =
     useSearchItems(data, ["serviceName"]);
@@ -56,17 +61,12 @@ export default function Passwords() {
         </View>
       </AnimatedHeaderWrapper>
 
-      <Animated.FlatList
+      <AnimatedFlatList
         data={filteredItems}
-        initialNumToRender={100}
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={50}
-        windowSize={50}
         keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
         onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        contentContainerStyle={{ paddingTop: headerHeight }}
+        headerHeight={headerHeight}
+        scrollY={scrollY}
         renderItem={({ item }) => <PasswordItem item={item} />}
       />
 

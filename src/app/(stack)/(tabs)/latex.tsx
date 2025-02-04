@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/Button";
 import { Octicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useTheme } from "@/contexts/ThemeProvider";
-import Animated from "react-native-reanimated";
 import { useAnimatedHeader } from "@/components/ui/header/hooks/useAnimatedHeader";
 import { AnimatedHeaderWrapper } from "@/components/ui/header/AnimatedHeaderWrapper";
 import { useColorScheme } from "nativewind";
 import { EquationItem } from "@/components/latex/EquationItem";
 import { useSearchItems } from "@/hooks/useSeachItems";
+import { AnimatedFlatList } from "@/components/ui/flat-list/AnimatedFlatList";
 
 const data = Array.from({ length: 20 }, (_, i) => ({
   id: String(i),
@@ -21,8 +21,13 @@ const data = Array.from({ length: 20 }, (_, i) => ({
 export default function LatexScreen() {
   const { currentTintColor, colors } = useTheme();
   const { colorScheme } = useColorScheme();
-  const { headerHeight, setHeaderHeight, scrollHandler, animatedStyle } =
-    useAnimatedHeader();
+  const {
+    headerHeight,
+    scrollY,
+    setHeaderHeight,
+    scrollHandler,
+    animatedStyle,
+  } = useAnimatedHeader();
 
   const { searchTerm, filteredItems, handleSearch, handleSearchSubmit } =
     useSearchItems(data, ["equation"]);
@@ -52,17 +57,12 @@ export default function LatexScreen() {
         </View>
       </AnimatedHeaderWrapper>
 
-      <Animated.FlatList
+      <AnimatedFlatList
         data={filteredItems}
-        initialNumToRender={100}
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={50}
-        windowSize={50}
         keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
         onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        contentContainerStyle={{ paddingTop: headerHeight }}
+        headerHeight={headerHeight}
+        scrollY={scrollY}
         renderItem={({ item }) => <EquationItem item={item} />}
       />
 

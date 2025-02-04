@@ -1,5 +1,7 @@
 export const editorConfig = {
   saveToPhoto: false,
+  jumpToPositionOnLoad: 1,
+  removeAfterSavedToPhoto: true,
   outputExt: "mp4",
   saveButtonText: "Avançar",
   cancelButtonText: "Cancelar",

@@ -33,12 +33,6 @@ export default function StackLayout() {
           headerTintColor: colors[colorScheme || "dark"].text,
         }}
       />
-      <Stack.Screen
-        name="video/[uri]"
-        options={{
-          title: "Vídeo",
-        }}
-      />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
     </Stack>
   );

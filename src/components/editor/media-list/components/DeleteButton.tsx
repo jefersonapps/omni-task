@@ -9,7 +9,7 @@ interface DeleteButtonProps {
 export function DeleteButton({ onPress, colorScheme }: DeleteButtonProps) {
   return (
     <View className="absolute right-2 top-2 z-50">
-      <Button type="primary" variant="circle" filled onPress={onPress}>
+      <Button type="primary" variant="tinyCircle" filled onPress={onPress}>
         <Button.Icon
           name="cross"
           color={colorScheme === "dark" ? "white" : "black"}

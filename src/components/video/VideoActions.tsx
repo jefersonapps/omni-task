@@ -3,6 +3,7 @@ import ShareIcon from "../../../assets/icons/share.svg";
 
 import { ScrollView, View } from "react-native";
 import { ThemedText } from "../ui/ThemedText";
+import { Button } from "../ui/Button";
 
 export function VideoActions({
   onEdit,
@@ -19,16 +20,23 @@ export function VideoActions({
       showsHorizontalScrollIndicator={false}
       contentContainerClassName="gap-2"
     >
-      <ActionButton
-        label="Editar"
-        icon={<CutVideoIcon width={24} height={24} fill={currentTintColor} />}
-        onPress={onEdit}
-      />
-      <ActionButton
-        label="Compartilhar"
-        icon={<ShareIcon width={24} height={24} fill={currentTintColor} />}
-        onPress={onShare}
-      />
+      <Button type="primary" variant="rounded" onPress={onEdit}>
+        <Button.Icon
+          customIcon={
+            <CutVideoIcon width={24} height={24} fill={currentTintColor} />
+          }
+        />
+        <Button.Text>Editar</Button.Text>
+      </Button>
+
+      <Button type="primary" variant="rounded" onPress={onShare}>
+        <Button.Icon
+          customIcon={
+            <ShareIcon width={24} height={24} fill={currentTintColor} />
+          }
+        />
+        <Button.Text>Compartilhar</Button.Text>
+      </Button>
     </ScrollView>
   );
 }

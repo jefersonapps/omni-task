@@ -9,7 +9,11 @@ interface Item {
 
 const ListComponent = ({ item }: { item: Item }) => {
   return (
-    <View className="p-4 border border-gray-300">
+    <View className="p-4 border rounded-md border-gray-300">
+      <ThemedText>{item.title}</ThemedText>
+      <ThemedText>{item.title}</ThemedText>
+      <ThemedText>{item.title}</ThemedText>
+      <ThemedText>{item.title}</ThemedText>
       <ThemedText>{item.title}</ThemedText>
     </View>
   );

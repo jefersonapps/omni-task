@@ -1,10 +1,21 @@
-import { VideoInfo } from "@/app/(stack)/video/[uri]";
 import React, { createContext, useContext, useState } from "react";
+
+export interface MediaDimensions {
+  width: number;
+  height: number;
+}
+
+export interface MediaInfo {
+  name: string;
+  type: string;
+  dimensions?: MediaDimensions;
+  size: number;
+}
 
 export interface Media {
   id: string;
   uri: string;
-  info: VideoInfo;
+  info: MediaInfo;
 }
 
 const MediaContext = createContext<{

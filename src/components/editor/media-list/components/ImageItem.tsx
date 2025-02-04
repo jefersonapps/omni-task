@@ -4,6 +4,7 @@ import { useColorScheme } from "nativewind";
 import { memo } from "react";
 import { MediaItem } from "./MediaItem";
 import { Image } from "react-native";
+import { router } from "expo-router";
 
 export const ImageItem = memo(({ image }: { image: Media }) => {
   const { colorScheme } = useColorScheme();
@@ -13,9 +14,18 @@ export const ImageItem = memo(({ image }: { image: Media }) => {
     await deleteMedia(image.id);
   };
 
+  const handleCropImage = () => {
+    router.push({
+      pathname: "/image/[id]",
+      params: {
+        id: image.id,
+      },
+    });
+  };
+
   return (
     <MediaItem
-      onPress={() => console.log(`Imagem: ${image.uri}`)}
+      onPress={handleCropImage}
       onDelete={handleDelete}
       colorScheme={colorScheme}
       renderContent={() => (
