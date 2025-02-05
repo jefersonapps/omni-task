@@ -17,7 +17,7 @@ const Input = forwardRef<TextInput, TextInputProps>(
     return (
       <View
         className={clsx(
-          "flex-1 flex-row bg-transparent rounded-lg border border-zinc-300 px-3 w-full min-h-14",
+          "flex-row bg-transparent rounded-lg border border-zinc-300 px-3 w-full min-h-14",
           "dark:border-zinc-700"
         )}
       >
